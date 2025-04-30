@@ -1,0 +1,397 @@
+Question (1)
+•	Create a UML Class Diagram from the detail provided above.
+•	Create a UML Activity Diagram from the detail provided above by using Swimlane.
+ An on-demand event planning service enables consumers to customize and book various event services, such as catering, music, decoration, and coordination. 
+Consumers can choose from different event types, such as weddings, birthdays, or corporate events, and select services like catering, music entertainment, and venue decoration. 
+They can customize the services based on their preferences, such as specifying a menu for catering or selecting entertainment types for music. 
+To place an order, consumers must create an account and provide personal details, including their address and payment method. 
+After selecting and customizing the services, the system calculates the total cost and presents it to the consumer. 
+If any required information is missing, such as dietary preferences or guest lists, the consumer is prompted to complete the missing details.
+Once the order is confirmed and the payment processed, the event planning team coordinates with the relevant suppliers (e.g., caterers, decorators, entertainers) to ensure everything is prepared for the event. 
+If any issues arise, such as delays in catering delivery or missing equipment, the consumer is informed, and the team works to resolve the problem. 
+After the event, the consumer is billed, and the system tracks stock levels of supplies (e.g., table settings, party favors), placing orders with suppliers when stocks are low.
+
+
+
+
+(Answer):
+Below are two UML diagrams expressed in PlantUML syntax. You can copy each block into any PlantUML-enabled tool (or online renderer) to see the visual diagrams.
+
+1) UML Class Diagram@startuml
+
+
+
+'=== Classes ===
+class Consumer {
+  - consumerId: String
+  - name: String
+  - email: String
+  - address: String
+  - paymentDetails: PaymentMethod
+  + createAccount()
+  + updateDetails()
+  + placeOrder(order: EventOrder)
+}
+
+class EventOrder {
+  - orderId: String
+  - eventType: String
+  - orderDate: Date
+  - totalCost: Money
+  - status: String
+  + calculateTotalCost(): Money
+  + confirmOrder()
+  + processPayment()
+}
+
+abstract class Service {
+  - serviceId: String
+  - serviceName: String
+  - baseCost: Money
+  + customize()
+  + getCost(): Money
+}
+
+class CateringService {
+  - menuDetails: String
+  - dietaryPreferences: String
+  + customizeMenu()
+}
+
+class MusicService {
+  - entertainmentType: String
+  - duration: Integer
+  + selectEntertainment()
+}
+
+class DecorationService {
+  - decorationTheme: String
+  - equipmentList: List<String>
+  + customizeDecoration()
+}
+
+class CoordinationService {
+  - coordinatorAssigned: String
+  + coordinateEvent()
+}
+
+class PaymentMethod {
+  - paymentType: String
+  - cardNumber: String
+  - expiryDate: Date
+  + processPayment(): Boolean
+}
+
+class Supplier {
+  - supplierId: String
+  - name: String
+  - serviceType: String
+  + supplyService()
+}
+
+class InventoryItem {
+  - itemId: String
+  - itemName: String
+  - stockLevel: Integer
+  - reorderLevel: Integer
+  + checkStock(): Integer
+  + reorder()
+}
+
+class StockOrder {
+  - stockOrderId: String
+  - date: Date
+  - quantity: Integer
+  + placeOrder()
+}
+
+class Issue {
+  - issueId: String
+  - issueType: String
+  - description: String
+  - status: String
+  + reportIssue()
+  + resolveIssue()
+}
+
+'=== Inheritance ===
+Service <|-- CateringService
+Service <|-- MusicService
+Service <|-- DecorationService
+Service <|-- CoordinationService
+
+'=== Associations ===
+Consumer "1" -- "*" EventOrder
+EventOrder "1" o-- "*" Service
+EventOrder --> PaymentMethod
+Service --> Supplier
+EventOrder "1" -- "*" Issue
+Issue --> Consumer
+Issue --> Supplier
+
+InventoryItem "1" -- "*" StockOrder
+StockOrder --> Supplier
+
+@enduml
+
+2) UML Activity Diagram (with Swimlanes)
+
+
+@startuml
+|Consumer|
+start
+:Create account;
+:Enter personal details (address, payment);
+:Select event type & services;
+:Customize each service;
+:Submit order;
+
+|System|
+:Validate information;
+if (missing info?) then (yes)
+  ->Consumer: Prompt to complete details
+  stop
+else (no)
+  :Calculate total cost;
+  :Present total cost;
+  ->Consumer: Confirm and pay
+  :Process payment;
+  :Order confirmed;
+  ->EventPlanningTeam: Notify of new order
+endif
+
+|EventPlanningTeam|
+:Assign coordinators;
+:Send service requests to suppliers;
+fork
+  :Monitor supplier confirmations;
+fork again
+  :Monitor event-day execution;
+end fork
+if (issue arises?) then (yes)
+  :Report issue to Consumer;
+  :Work with Supplier to resolve;
+endif
+:Mark event completed;
+->System: Trigger post-event billing & inventory
+
+|System|
+:Generate final bill;
+:Send bill to Consumer;
+:Update Inventory levels;
+
+|InventorySystem|
+:Check stock levels;
+if (stock < reorderLevel) then (yes)
+  :Place StockOrder with Supplier;
+endif
+
+stop
+@enduml
+
+
+----(How to use)----
+
+
+Copy each @startuml…@enduml block into a PlantUML editor (e.g. VS Code with PlantUML extension, or an online renderer such as www.plantuml.com/plantuml).
+
+Render to view or export as PNG/SVG.
+
+These two diagrams capture the key domain classes, their relationships, and the end-to-end flow of placing and executing an on-demand event planning order, including swimlanes for each actor.
+
+
+
+
+
+(Question 2 ) :•	Create  use case diagram [10]
+An on-demand custom home decor service enables consumers to order personalized furniture pieces or wall art. 
+Consumers can choose from various categories, including furniture like chairs, sofas, or tables, and wall art like paintings or posters. 
+They can specify details such as materials, colors, and sizes, and for wall art, they can upload custom designs or images. 
+To place an order, consumers must create an account and provide their shipping and payment information. Once the order is customized, the system generates a preview and shows the total cost. 
+If any required information is missing, such as payment or shipping details, the system prompts the consumer to complete their account. 
+After confirming the order, payment is processed, and the production team begins creating the customized piece. 
+If any issues arise during production, such as a design mismatch or incorrect size, the consumer is notified to revise their order.
+Upon approval of payment, the customized furniture or artwork is produced and shipped. 
+The system also tracks material stock, such as wood, fabric, or paints, and when stock levels fall below a threshold, it automatically orders more from suppliers.
+
+
+(Answer):
+Here’s a UML Use-Case diagram in PlantUML syntax for your on-demand custom home-decor service. Copy the block below into any PlantUML editor (e.g. VS Code + PlantUML extension, or https://www.plantuml.com/plantuml) to render the diagram.
+
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor Consumer
+actor "Production Team" as ProdTeam
+actor Supplier
+
+rectangle "Custom Home Decor System" {
+  
+  ' Core consumer flows
+  Consumer -- (Create Account)
+  Consumer -- (Provide Shipping Info)
+  Consumer -- (Provide Payment Info)
+  Consumer -- (Customize Furniture)
+  Consumer -- (Customize Wall Art)
+  Consumer -- (Upload Custom Design)
+  Consumer -- (Generate Preview)
+  Consumer -- (Confirm Order)
+  Consumer -- (Revise Order)
+  Consumer -- (Receive Issue Notification)
+
+  ' Production team flows
+  ProdTeam -- (Produce Custom Piece)
+  ProdTeam -- (Ship Product)
+
+  ' Inventory flows
+  (Track Material Stock)
+  (Reorder Materials)
+
+  ' External supplier for reorders
+  Supplier -- (Reorder Materials)
+
+  ' include/extend relationships
+  (Customize Furniture) .> (Generate Preview)       : <<include>>
+  (Customize Wall Art) .> (Generate Preview)         : <<include>>
+  (Confirm Order) .> (Process Payment)               : <<include>>
+  (Confirm Order) .> (Produce Custom Piece)          : <<include>>
+  (Produce Custom Piece) .> (Ship Product)           : <<include>>
+  (Confirm Order) .> (Prompt for Missing Info)       : <<extend>>
+  (Produce Custom Piece) .> (Notify Issue)           : <<extend>>
+  (Track Material Stock) .> (Reorder Materials)      : <<include>>
+}
+
+@enduml
+
+(Key elements):
+
+Actors: Consumer, Production Team, Supplier
+
+Use cases: account setup, customization, preview, order/payment, production, shipping, inventory tracking & reordering
+
+Includes show mandatory sub-flows (e.g. preview after customization, payment during confirmation).
+
+Extends show optional/error flows (e.g. prompting for missing info, notifying issues).
+
+
+
+
+
+
+Question 3 [10]
+ Create Sequence Diagram
+This on-demand custom cake and bakery service allows consumers to order personalized cakes, cupcakes, and other baked goods. 
+Consumers can choose from a variety of cake types such as chocolate, vanilla, or red velvet and customize them with different frosting flavors and decorations. 
+If a consumer has a specific design in mind, they can upload an image file for custom decoration. 
+To place an order, consumers must create an account and provide their details, including their shipping address and payment method.
+After selecting the cake type and any customizations, the system generates a preview of the cake and calculates the total cost. 
+If any required information is missing, such as payment or address details, the consumer is prompted to provide the necessary information. 
+Upon confirming the order, payment is processed, and once it is approved, the bakery team proceeds with the preparation. 
+If the uploaded design or other aspects of the order do not meet the bakery’s standards, the consumer is informed and asked to submit a new design. 
+After the cake is baked and decorated, it is delivered to the specified address. 
+The system also tracks ingredients like flour and frosting, and when supplies are running low, it automatically orders more from the suppliers.
+
+
+
+Answer:
+Here’s a UML Sequence Diagram (in PlantUML syntax) covering the end-to-end flow you described. Copy the block into any PlantUML renderer to visualize the sequence:
+
+@startuml
+actor Consumer
+participant "CustomCakeSystem" as System
+participant PaymentGateway
+participant BakeryTeam
+participant InventorySystem
+participant Supplier
+participant DeliveryService
+
+== Account Creation & Details ==
+Consumer -> System: createAccount()
+alt missing shipping/payment info
+    System --> Consumer: promptForMissingInfo()
+    Consumer -> System: submitShippingAndPaymentInfo()
+end
+
+== Customization & Preview ==
+Consumer -> System: selectCake(type, frosting, decorations)
+alt custom design required
+    Consumer -> System: uploadDesign(imageFile)
+end
+System -> System: generatePreview()
+System -> System: calculateTotalCost()
+System --> Consumer: showPreviewAndCost()
+
+== Order Confirmation & Payment ==
+Consumer -> System: confirmOrder()
+System -> PaymentGateway: processPayment(paymentDetails)
+alt payment approved
+    PaymentGateway --> System: paymentSuccess()
+    
+    == Production Phase ==
+    System -> BakeryTeam: newOrder(orderDetails)
+    BakeryTeam -> System: validateDesign()
+    alt design issue
+        System --> Consumer: notifyDesignIssue()
+        Consumer -> System: resubmitDesign(imageFile)
+        BakeryTeam -> System: designApproved()
+    end
+    
+    == Ingredient Check & Reorder ==
+    BakeryTeam -> InventorySystem: checkIngredientStock()
+    alt stock < threshold
+        InventorySystem -> Supplier: placeReorder(materials)
+        Supplier --> InventorySystem: confirmReorder()
+    end
+    
+    == Bake & Decorate ==
+    BakeryTeam -> BakeryTeam: bakeCake()
+    BakeryTeam -> BakeryTeam: decorateCake()
+    
+    == Delivery ==
+    BakeryTeam -> DeliveryService: scheduleDelivery(order)
+    DeliveryService --> Consumer: deliverCake()
+    DeliveryService --> System: deliveryConfirmed()
+
+else payment failed
+    PaymentGateway --> System: paymentFailure()
+    System --> Consumer: notifyPaymentFailure()
+end
+@enduml
+
+
+Explanation of key segments:
+
+Account setup
+
+Consumer creates an account.
+
+If shipping or payment details are missing, the system prompts and the consumer supplies them.
+
+Customization & preview
+
+Consumer selects cake parameters (type, frosting, decorations).
+
+Optionally uploads a custom design image.
+
+System generates a preview and computes the cost, then displays both.
+
+Payment & order confirmation
+
+Consumer confirms the order, triggering payment processing via an external gateway.
+
+On success, flow continues to production; on failure, consumer is notified.
+
+Production
+
+Bakery team validates the design. If there’s an issue, the consumer is notified and can resubmit.
+
+Ingredients are checked; low-stock triggers an automatic reorder from suppliers.
+
+Baking, decorating & delivery
+
+Cake is baked and decorated.
+
+Delivery is scheduled; the delivery service delivers the cake and confirms back to the system.
+
+This sequence captures all the interactions, decision points (alt/else), and lifelines (actors/components) in your custom cake ordering process.
